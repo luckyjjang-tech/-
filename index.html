@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#30204d">
+<title>무사랑 오늘의 일일운세</title>
+<style>
+:root{--ink:#30204d;--purple:#7651a5;--gold:#d9b66f;--cream:#fffaf2;--muted:#766d80}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#f8efff,#fff8ed 55%,#f5e8f4);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;color:var(--ink)}
+main{width:min(720px,100%);margin:auto;padding:22px 16px 48px}
+.hero{background:radial-gradient(circle at 80% 20%,#7651a5,#30204d 68%);color:white;border-radius:26px;padding:28px 22px;text-align:center;box-shadow:0 14px 35px #3b245022;overflow:hidden;position:relative}
+.hero:after{content:"☯";position:absolute;font-size:150px;color:#ffffff12;right:-12px;bottom:-55px}
+.brand{font-size:14px;letter-spacing:.35em;color:#f1dcae}.hero h1{font-size:clamp(28px,7vw,42px);margin:12px 0 8px;color:#fff2ce}.hero p{margin:0;color:#eee2fa}
+.orbit{font-size:38px;margin:20px 0 4px;letter-spacing:8px}
+.panel{background:#ffffffdf;border:1px solid #eadcf1;border-radius:22px;padding:22px;margin-top:18px;box-shadow:0 8px 25px #3b24500b}
+h2{font-size:20px;margin:0 0 8px}.sub{color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 18px}
+label{display:block;font-weight:700;margin:12px 0 7px}input{width:100%;padding:15px;border:1px solid #d8c8e2;border-radius:12px;font:inherit;background:white;color:var(--ink)}
+button{width:100%;border:0;border-radius:14px;padding:16px;margin-top:18px;background:linear-gradient(100deg,#7651a5,#4b326d);color:white;font-weight:800;font-size:17px;cursor:pointer}
+button:focus,input:focus{outline:3px solid #d9b66f88;outline-offset:2px}
+.notice{font-size:12px;color:var(--muted);line-height:1.65;margin-top:14px}
+#result{display:none}.datebar{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.iljin{background:#f4ebfa;border-radius:18px;text-align:center;padding:18px;margin:16px 0}
+.iljin strong{display:block;font-size:34px;color:#593b7e;margin:5px}
+.score{font-size:13px;color:#7651a5;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:#fff;border:1px solid #eee2f2;border-radius:15px;padding:15px}.card h3{font-size:15px;margin:0 0 7px}.card p{font-size:14px;line-height:1.65;margin:0;color:#51465d}
+.advice{background:#fff7e7;border:1px solid #f0dfb8;border-radius:16px;padding:16px;margin-top:12px;line-height:1.7;font-size:14px}
+footer{text-align:center;color:#93879a;font-size:11px;margin:22px 8px}
+.smallbtn{background:transparent;color:#654887;border:1px solid #d9c9e5;margin-top:10px}
+@media(max-width:430px){.cards{grid-template-columns:1fr}.panel{padding:18px}.hero{padding:24px 16px}}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+ <div class="brand">NAVER CAFE · 무사랑</div>
+ <h1>오늘의 일일운세</h1>
+ <p>명리의 상징과 오늘의 작은 즐거움을 함께</p>
+ <div class="orbit" aria-hidden="true">🐭 🐯 🐲 🐍 🐴</div>
+ <div style="font-size:12px;color:#f1dcae">매일 새롭게 확인하는 나의 하루</div>
+</header>
+<section class="panel" id="entry">
+ <h2>나의 운세 확인하기</h2>
+ <p class="sub">양력 생년월일을 입력하면 오늘의 일진과 생년을 참고한 운세를 보여드립니다. 회원가입은 필요 없습니다.</p>
+ <label for="birth">생년월일 (양력)</label>
+ <input id="birth" type="date" min="1900-01-01" max="2100-12-31">
+ <button id="show">오늘의 운세 확인하기</button>
+ <p class="notice">※ 현재 첫 버전은 양력 날짜만 사용합니다. 음력·윤달·절기 및 출생 시각을 반영한 정밀 사주 분석은 포함하지 않습니다.</p>
+</section>
+<section class="panel" id="result" aria-live="polite">
+ <div class="datebar"><span id="today"></span><span id="birthlabel"></span></div>
+ <div class="iljin">
+  <div style="font-size:13px;color:#7651a5">오늘의 일진 · 60갑자</div>
+  <strong id="daypillar"></strong>
+  <div id="daydesc" style="font-size:13px;color:#766d80"></div>
+ </div>
+ <h2 id="headline">오늘의 흐름</h2>
+ <p class="sub" id="summary"></p>
+ <div class="cards" id="fortuneCards"></div>
+ <div class="advice"><b>오늘의 작은 조언</b><div id="tip"></div></div>
+ <button class="smallbtn" id="again">생년월일 다시 입력하기</button>
+</section>
+<footer>무사랑 일일운세 · 재미와 자기성찰을 위한 참고 콘텐츠입니다.<br>중요한 의사결정은 운세만으로 판단하지 마세요.</footer>
+</main>
+<script>
+"use strict";
+const stems=["갑","을","병","정","무","기","경","신","임","계"];
+const branches=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+const animals=["쥐","소","호랑이","토끼","용","뱀","말","양","원숭이","닭","개","돼지"];
+const stemTone=["새로운 시작과 추진력","유연함과 성장","표현력과 활기","따뜻한 집중력","안정감과 신뢰","정리와 균형","결단과 실행","섬세함과 판단","지혜와 흐름","마무리와 조율"];
+const branchTone=["관찰과 기회 포착","꾸준함과 기초 다지기","도전과 개척","관계와 조화","변화에 대한 적응","직관과 점검","열정과 표현","배려와 돌봄","재치와 유연함","정돈과 완성","원칙과 책임","휴식과 회복"];
+const fortunes={
+ 종합운:["작은 기회가 눈에 들어오는 날입니다. 서두르기보다 우선순위를 정하면 흐름이 좋아집니다.","평소 하던 일을 차분히 이어가세요. 꾸준함이 생각보다 큰 결과를 만듭니다.","새로운 제안이나 생각을 열린 마음으로 살펴보세요. 결정은 한 번 더 확인하는 편이 좋습니다.","주변과 호흡을 맞추면 일이 수월해집니다. 혼자 해결하려 하지 않아도 좋습니다."],
+ 금전운:["충동구매보다 필요한 지출을 먼저 살피세요. 작은 절약이 만족으로 이어집니다.","금전 관련 약속과 숫자를 꼼꼼히 확인하기 좋은 날입니다.","새로운 수익 아이디어를 메모해 보세요. 실행 전 조건을 확인하는 것이 중요합니다.","큰 결정보다는 예산을 정리하고 흐름을 점검하는 데 유리한 하루입니다."],
+ 애정운:["먼저 건네는 따뜻한 말 한마디가 관계를 부드럽게 합니다.","상대의 말을 끝까지 들어보세요. 공감이 오해를 줄여줍니다.","가벼운 안부나 감사 표현이 좋은 분위기를 만듭니다.","서로의 속도를 존중하면 편안한 관계를 이어갈 수 있습니다."],
+ 직장·사업운:["해야 할 일을 세 가지로 좁혀 집중해 보세요. 마무리에서 좋은 평가를 얻습니다.","협업과 정보 공유가 도움이 됩니다. 진행 상황을 분명하게 전달하세요.","미뤄둔 일을 시작하기 좋습니다. 처음부터 완벽할 필요는 없습니다.","새로운 방식을 시도해 보되 중요한 내용은 기록으로 남기세요."],
+ 건강운:["짧게라도 몸을 움직이고 물을 충분히 마셔보세요.","무리한 일정은 피하고 휴식 시간을 미리 확보하세요.","식사와 수면 리듬을 일정하게 유지하는 것이 좋겠습니다.","가벼운 스트레칭과 깊은 호흡으로 긴장을 풀어보세요."]
+};
+const tips=["중요한 메시지는 보내기 전 한 번 더 읽어보세요.","오늘 고마웠던 일 한 가지를 적어보세요.","미뤄둔 작은 일을 10분만 시작해 보세요.","잠깐 바깥 공기를 쐬며 생각을 환기해 보세요.","지출 전 꼭 필요한지 잠시 멈춰 생각해 보세요.","상대에게 먼저 부드러운 인사를 건네보세요."];
+function parseDate(s){const [y,m,d]=s.split("-").map(Number);return new Date(Date.UTC(y,m-1,d));}
+function jdn(date){ // Gregorian date -> integer Julian Day Number
+ const y=date.getUTCFullYear(), m=date.getUTCMonth()+1, d=date.getUTCDate();
+ const a=Math.floor((14-m)/12), yy=y+4800-a, mm=m+12*a-3;
+ return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;
+}
+// 기준일 2000-01-07을 갑자일(0번)로 둔 60갑자 일진 순환
+function dayPillar(date){const index=((jdn(date)-2451551)%60+60)%60;return {index,name:stems[index%10]+branches[index%12],stem:stems[index%10],branch:branches[index%12]};}
+function hash(s){let h=2166236261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function pick(arr,seed){return arr[seed%arr.length];}
+function seoulToday(){
+ const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
+ const part={}; for(const p of parts){if(p.type!=="literal")part[p.type]=p.value;}
+ return new Date(Date.UTC(Number(part.year),Number(part.month)-1,Number(part.day)));
+}
+function formatDate(d){return new Intl.DateTimeFormat("ko-KR",{year:"numeric",month:"long",day:"numeric",weekday:"long",timeZone:"UTC"}).format(d);}
+function render(){
+ const val=document.getElementById("birth").value;
+ if(!val){alert("양력 생년월일을 입력해 주세요.");return;}
+ const birth=parseDate(val), today=seoulToday();
+ if(birth>today){alert("미래 날짜는 입력할 수 없습니다.");return;}
+ const p=dayPillar(today), seed=hash(val+"|"+today.toISOString().slice(0,10)+"|musarang");
+ const yearAnimal=animals[((birth.getUTCFullYear()-2008)%12+12)%12]; // 띠 참고값: 입춘 경계 미적용
+ const dayElement=["목","목","화","화","토","토","금","금","수","수"][p.index%10];
+ document.getElementById("today").textContent=formatDate(today);
+ document.getElementById("birthlabel").textContent=`양력 ${val} · ${yearAnimal}띠(참고)`;
+ document.getElementById("daypillar").textContent=p.name+"일";
+ document.getElementById("daydesc").textContent=`${p.stem}의 상징: ${stemTone[p.index%10]} · ${p.branch}의 상징: ${branchTone[p.index%12]}`;
+ document.getElementById("headline").textContent=`오늘은 ${p.name}일, 나만의 하루`;
+ document.getElementById("summary").textContent=`오늘의 일진은 ${p.name}일이며, ${dayElement} 기운의 상징을 참고해 하루의 흐름을 살펴봅니다. 생년월일은 운세 문구를 개인화하는 참고값으로 사용합니다.`;
+ const labels=["종합운","금전운","애정운","직장·사업운","건강운"];
+ const html=labels.map((label,i)=>{const text=pick(fortunes[label],seed+i*97);const score=65+((seed>>>((i*5)%24))%31);return `<article class="card"><h3>${label} <span class="score">${score}점</span></h3><p>${text}</p></article>`}).join("");
+ document.getElementById("fortuneCards").innerHTML=html;
+ document.getElementById("tip").textContent=pick(tips,seed>>>7);
+ document.getElementById("entry").style.display="none";
+ document.getElementById("result").style.display="block";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+document.getElementById("show").addEventListener("click",render);
+document.getElementById("again").addEventListener("click",()=>{document.getElementById("result").style.display="none";document.getElementById("entry").style.display="block";window.scrollTo({top:0,behavior:"smooth"});});
+const birthInput=document.getElementById("birth");
+const seoulNow=seoulToday();
+birthInput.max=`${seoulNow.getUTCFullYear()}-${String(seoulNow.getUTCMonth()+1).padStart(2,"0")}-${String(seoulNow.getUTCDate()).padStart(2,"0")}`;
+</script>
+</body>
+</html>
