@@ -1,0 +1,683 @@
+
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#30204d">
+<title>무사랑 오늘의 일일운세</title>
+<style>
+:root{
+  --ink:#30204d;--purple:#7651a5;--gold:#d9b66f;
+  --cream:#fffaf2;--muted:#766d80
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:linear-gradient(145deg,#f8efff,#fff8ed 55%,#f5e8f4);
+  font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;
+  color:var(--ink)
+}
+main{width:min(720px,100%);margin:auto;padding:22px 16px 48px}
+.hero{
+  background:radial-gradient(circle at 80% 20%,#7651a5,#30204d 68%);
+  color:white;border-radius:26px;padding:28px 22px;text-align:center;
+  box-shadow:0 14px 35px #3b245022
+}
+.brand{font-size:14px;letter-spacing:.35em;color:#f1dcae}
+.hero h1{font-size:clamp(28px,7vw,42px);margin:12px 0 8px;color:#fff2ce}
+.hero p{margin:0;color:#eee2fa}
+.orbit{font-size:35px;margin:18px 0 4px;letter-spacing:5px}
+.panel{
+  background:#ffffffdf;border:1px solid #eadcf1;border-radius:22px;
+  padding:22px;margin-top:18px;box-shadow:0 8px 25px #3b24500b
+}
+h2{font-size:20px;margin:0 0 8px}
+.sub{color:var(--muted);font-size:13px;line-height:1.7;margin:0 0 18px}
+label{display:block;font-weight:700;margin:13px 0 7px}
+input,select{
+  width:100%;padding:14px;border:1px solid #d8c8e2;border-radius:12px;
+  font:inherit;background:white;color:var(--ink)
+}
+input:focus,select:focus,button:focus{
+  outline:3px solid #d9b66f88;outline-offset:2px
+}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.checkrow{display:flex;align-items:center;gap:9px;margin-top:13px}
+.checkrow input{width:19px;height:19px}
+.checkrow label{margin:0;font-size:14px}
+button{
+  width:100%;border:0;border-radius:14px;padding:16px;margin-top:18px;
+  background:linear-gradient(100deg,#7651a5,#4b326d);
+  color:white;font-weight:800;font-size:17px;cursor:pointer
+}
+.notice{font-size:12px;color:var(--muted);line-height:1.7;margin-top:14px}
+#error{font-size:13px;color:#a32636;margin-top:12px;line-height:1.6}
+#result{display:none}
+.datebar{
+  display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;
+  color:var(--muted);font-size:13px
+}
+.iljin{background:#f4ebfa;border-radius:18px;text-align:center;padding:18px;margin:16px 0}
+.iljin strong{display:block;font-size:34px;color:#593b7e;margin:5px}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.pillar{background:#f8f3fa;border-radius:12px;padding:12px 5px;text-align:center}
+.pillar b{display:block;font-size:19px;margin-top:5px}
+.pillar span{font-size:11px;color:var(--muted)}
+.elementbar{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:14px 0}
+.element{background:#f8f3fa;border-radius:12px;padding:10px 3px;text-align:center}
+.element b{display:block;font-size:19px}
+.element span{font-size:11px;color:var(--muted)}
+.element-note{
+  background:#f8f3fa;border-radius:13px;padding:13px;
+  font-size:13px;line-height:1.75;color:#5e506a;margin:10px 0 22px
+}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:#fff;border:1px solid #eee2f2;border-radius:15px;padding:16px}
+.card h3{font-size:15px;margin:0 0 8px;color:#593b7e}
+.card p{font-size:14px;line-height:1.8;margin:0;color:#51465d}
+.card .highlight{display:block;font-size:12px;color:#98713b;margin-top:10px;font-weight:700}
+.advice{
+  background:#fff7e7;border:1px solid #f0dfb8;border-radius:16px;
+  padding:17px;margin-top:14px;line-height:1.8;font-size:14px
+}
+.advice strong{color:#76551f}
+.advice .quote{font-size:17px;font-weight:800;color:#654887;margin-top:7px}
+.smallbtn{background:transparent;color:#654887;border:1px solid #d9c9e5;margin-top:10px}
+footer{text-align:center;color:#93879a;font-size:11px;margin:22px 8px;line-height:1.8}
+@media(max-width:430px){
+  .cards{grid-template-columns:1fr}
+  .panel{padding:18px}
+  .hero{padding:24px 16px}
+  .pillars{gap:5px}
+}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+  <div class="brand">NAVER CAFE · 무사랑</div>
+  <h1>오늘의 일일운세</h1>
+  <p>나의 사주와 오늘의 일진으로 살펴보는 하루</p>
+  <div class="orbit" aria-hidden="true">🐭 🐯 🐲 🐍 🐴</div>
+  <div style="font-size:12px;color:#f1dcae">오늘도 당신의 하루를 응원합니다</div>
+</header>
+
+<section class="panel" id="entry">
+  <h2>나의 운세 확인하기</h2>
+  <p class="sub">
+    생년월일과 태어난 시간을 입력해 주세요.
+    출생시간을 모르셔도 이용할 수 있습니다.
+  </p>
+
+  <label for="calendar">생년월일 구분</label>
+  <select id="calendar">
+    <option value="solar">양력</option>
+    <option value="lunar">음력</option>
+  </select>
+
+  <div id="leapArea" style="display:none">
+    <div class="checkrow">
+      <input type="checkbox" id="leap">
+      <label for="leap">윤달입니다</label>
+    </div>
+  </div>
+
+  <label>태어난 날짜</label>
+  <div class="row">
+    <input id="birthYear" type="number" placeholder="년" min="1800" max="2100">
+    <input id="birthMonth" type="number" placeholder="월" min="1" max="12">
+    <input id="birthDay" type="number" placeholder="일" min="1" max="31">
+  </div>
+
+  <div id="timeArea">
+    <label for="birthTime">태어난 시간</label>
+    <input id="birthTime" type="time" value="12:00">
+  </div>
+
+  <div class="checkrow">
+    <input type="checkbox" id="unknownTime">
+    <label for="unknownTime">태어난 시간을 모릅니다</label>
+  </div>
+
+  <button id="show">오늘의 운세 확인하기</button>
+  <div id="error" role="alert"></div>
+
+  <p class="notice">
+    ※ 출생시간을 모르면 시주를 제외하고 풀이합니다.
+    입력하신 출생정보는 이 페이지에서 계산하며 별도 서버에 저장하지 않습니다.
+  </p>
+</section>
+
+<section class="panel" id="result" aria-live="polite">
+  <div class="datebar">
+    <span id="today"></span>
+    <span id="birthlabel"></span>
+  </div>
+
+  <div class="iljin">
+    <div style="font-size:13px;color:#7651a5">오늘의 일진 · 60갑자</div>
+    <strong id="daypillar"></strong>
+    <div id="daydesc" style="font-size:13px;color:#766d80"></div>
+  </div>
+
+  <h2>나의 사주 구성</h2>
+  <p class="sub" id="daymaster"></p>
+  <div class="pillars" id="pillars"></div>
+
+  <h2>나의 오행 분포</h2>
+  <p class="sub">사주에 드러난 천간과 지지의 기본 오행 구성입니다.</p>
+  <div class="elementbar" id="elements"></div>
+  <div class="element-note" id="elementNote"></div>
+
+  <h2>오늘 나에게 들어오는 흐름</h2>
+  <p class="sub" id="summary"></p>
+  <div class="cards" id="fortuneCards"></div>
+
+  <div class="advice">
+    <strong>🌷 오늘의 무사랑 응원 메시지</strong>
+    <div id="tip"></div>
+    <div class="quote" id="quote"></div>
+  </div>
+
+  <button class="smallbtn" id="again">생년월일 다시 입력하기</button>
+</section>
+
+<footer>
+  무사랑 일일운세 · 전통 명리의 상징을 활용한 재미와 자기 성찰을 위한 참고 콘텐츠입니다.<br>
+  운세는 가벼운 마음으로 즐기시고 중요한 건강·재정·법률 결정은 전문적인 판단을 함께 고려하세요.
+</footer>
+</main>
+
+<script type="module">
+import {
+  calculateFourPillars,
+  getHeavenlyStemElement,
+  getEarthlyBranchElement
+} from "https://esm.sh/manseryeok@2.0.0";
+
+const $ = id => document.getElementById(id);
+
+const elements = ["목","화","토","금","수"];
+const generates = {목:"화",화:"토",토:"금",금:"수",수:"목"};
+const controls = {목:"토",토:"수",수:"화",화:"금",금:"목"};
+
+const elementNames = {
+  목:"목(木)",화:"화(火)",토:"토(土)",금:"금(金)",수:"수(水)"
+};
+
+const relationNames = {
+  same:"비겁의 흐름",
+  output:"식상의 흐름",
+  resource:"인성의 흐름",
+  wealth:"재성의 흐름",
+  authority:"관성의 흐름"
+};
+
+/* 오행 관계별 기본 운세 문장 */
+const readings = {
+  종합운:{
+    same:[
+      "오늘은 나만의 색깔이 살아나는 날입니다. 남과 비교하기보다 내가 잘하는 것을 믿고 움직여 보세요.",
+      "자신감이 좋은 결과를 만드는 날입니다. 다만 내 생각만 옳다고 고집하지 않으면 사람들과의 호흡도 좋아집니다.",
+      "그동안 미뤄 둔 일을 다시 시작하기 좋습니다. 완벽한 준비보다 작은 첫걸음이 더 큰 변화를 만듭니다."
+    ],
+    output:[
+      "생각과 아이디어를 밖으로 꺼내 보세요. 말 한마디, 작은 행동 하나가 새로운 기회를 만들 수 있습니다.",
+      "표현력이 살아나는 흐름입니다. 마음속에 담아 둔 이야기를 부드럽게 전하면 좋은 반응을 얻을 수 있습니다.",
+      "움직일수록 배울 것이 생기는 날입니다. 너무 오래 고민하지 말고 할 수 있는 일부터 시작해 보세요."
+    ],
+    resource:[
+      "배움과 도움의 기운을 활용하기 좋습니다. 경험자의 조언이나 우연히 들은 이야기가 좋은 실마리가 될 수 있습니다.",
+      "잠시 멈춰 정리하면 오히려 길이 잘 보입니다. 서두르지 않는 것이 오늘의 지혜입니다.",
+      "내면을 채우고 기초를 다지기에 좋은 날입니다. 지금 쌓는 작은 준비가 다음 기회를 든든하게 받쳐 줍니다."
+    ],
+    wealth:[
+      "현실적인 감각이 필요한 날입니다. 좋은 기회가 보이면 반갑게 맞이하되 조건을 꼼꼼히 살펴보세요.",
+      "실속을 챙기기 좋은 흐름입니다. 큰 욕심보다 작더라도 확실한 성과 하나를 만드는 데 집중해 보세요.",
+      "노력의 결과를 돌아보고 정리하기 좋습니다. 내가 가진 자원과 시간을 어디에 쓸지 정하면 하루가 알차집니다."
+    ],
+    authority:[
+      "책임감과 집중력이 필요한 날입니다. 해야 할 일을 차근차근 처리하면 주변의 신뢰도 함께 쌓입니다.",
+      "원칙을 지키는 태도가 빛을 발합니다. 다만 모든 일을 혼자 짊어지지는 마세요. 도움을 요청하는 것도 능력입니다.",
+      "약속과 계획을 점검하기 좋은 날입니다. 순서를 정하고 하나씩 해결하면 생각보다 수월하게 풀립니다."
+    ]
+  },
+  금전운:{
+    same:[
+      "내가 원하는 것과 꼭 필요한 것을 구분해 보세요. 기분 좋은 소비도 예산 안에서 하면 더 즐겁습니다.",
+      "자신의 판단으로 돈을 움직이기 쉬운 날입니다. 결제 버튼을 누르기 전 잠깐만 생각하면 지갑이 웃습니다.",
+      "작은 지출을 정리하면 의외의 여유가 생길 수 있습니다. 오늘은 지갑 속 영수증부터 정리해 볼까요?"
+    ],
+    output:[
+      "새로운 수입 아이디어를 떠올리기 좋습니다. 생각만 하지 말고 비용과 실행 방법을 간단히 적어 보세요.",
+      "내 재능을 활용할 방법을 찾아보세요. 작은 능력도 누군가에게는 필요한 가치가 될 수 있습니다.",
+      "돈이 되는 정보와 경험을 모으기 좋은 날입니다. 다만 확인되지 않은 투자 제안에는 서두르지 마세요."
+    ],
+    resource:[
+      "통장과 카드 내역을 점검하기 좋습니다. 새는 돈을 찾는 것만으로도 작은 수익을 얻은 기분이 들 겁니다.",
+      "재정 계획을 다시 살펴보세요. 오늘 세운 작은 절약 습관이 한 달 뒤 든든한 힘이 됩니다.",
+      "돈에 관한 공부와 정보 정리에 좋은 흐름입니다. 모르는 조건은 반드시 확인하고 결정하세요."
+    ],
+    wealth:[
+      "실속을 챙기는 감각이 필요한 날입니다. 수입과 지출의 균형을 살피고 무리한 욕심은 잠시 내려놓으세요.",
+      "금전과 관련된 약속이나 거래를 확인하기 좋습니다. 작은 글씨 속 조건까지 살펴보는 꼼꼼함이 재산을 지켜줍니다.",
+      "성과를 현실적으로 점검해 보세요. 큰 한 방보다 꾸준히 지키는 작은 이익이 더 든든합니다."
+    ],
+    authority:[
+      "돈과 관련한 책임을 분명히 하는 것이 좋습니다. 빌려주거나 보증하는 일은 충분히 생각한 뒤 결정하세요.",
+      "고정 지출과 정기 결제를 점검해 보세요. 필요 없는 지출을 줄이는 것부터 재물 관리가 시작됩니다.",
+      "계약이나 금전 약속은 말보다 기록으로 확인하세요. 꼼꼼함이 오늘의 든든한 재물 지킴이입니다."
+    ]
+  },
+  애정운:{
+    same:[
+      "나를 사랑하는 마음이 관계의 시작입니다. 내 감정을 살피면서 상대의 마음에도 귀를 기울여 보세요.",
+      "자신감 있는 미소가 좋은 분위기를 만듭니다. 먼저 건네는 따뜻한 인사 하나가 하루를 바꿀 수 있습니다.",
+      "가까운 사람에게 고마움을 표현해 보세요. 익숙한 사이일수록 작은 표현이 큰 선물이 됩니다."
+    ],
+    output:[
+      "대화와 표현이 관계에 활기를 더합니다. 마음에 있는 말을 부드럽게 전해 보세요.",
+      "유쾌한 대화가 좋은 인연을 부르는 날입니다. 억지로 잘 보이려 하기보다 자연스러운 모습이 좋습니다.",
+      "먼저 안부를 건네 보세요. 기다리던 연락보다 내가 먼저 보내는 따뜻한 메시지가 더 멋질 수 있습니다."
+    ],
+    resource:[
+      "상대의 이야기를 충분히 들어주는 것이 좋습니다. 해결책보다 공감 한마디가 더 큰 위로가 될 수 있습니다.",
+      "조용한 배려가 관계를 따뜻하게 합니다. 오늘은 말보다 마음을 헤아리는 시간을 가져보세요.",
+      "오래된 인연을 돌아보기 좋습니다. 반가운 사람에게 안부를 전해 보는 건 어떨까요?"
+    ],
+    wealth:[
+      "관계에서도 현실적인 배려가 중요합니다. 서로의 생활 방식과 기대를 솔직하고 부드럽게 나눠 보세요.",
+      "함께하는 시간의 가치를 생각해 보세요. 비싼 선물보다 진심 어린 관심이 더 오래 기억됩니다.",
+      "상대와 작은 약속을 지키는 것이 신뢰를 쌓습니다. 사소한 배려가 사랑을 키웁니다."
+    ],
+    authority:[
+      "서로의 약속과 신뢰를 돌아보기 좋습니다. 서운함이 있다면 쌓아 두지 말고 차분하게 이야기해 보세요.",
+      "관계에서 책임과 배려의 균형을 맞춰 보세요. 내 기준만큼 상대의 기준도 존중하면 마음이 편안해집니다.",
+      "진지한 대화가 필요한 날입니다. 이기려는 말보다 이해하려는 말이 관계를 더 단단하게 만듭니다."
+    ]
+  },
+  "직장·사업운":{
+    same:[
+      "주도적으로 일을 추진하기 좋습니다. 혼자 앞서가기보다 주변과 진행 상황을 나누면 더 좋은 결과가 나옵니다.",
+      "자신의 강점을 보여줄 기회입니다. 작은 일이라도 책임감 있게 마무리하면 신뢰가 쌓입니다.",
+      "미뤄 둔 업무를 다시 시작해 보세요. 시작이 반이라는 말은 괜히 있는 게 아닙니다."
+    ],
+    output:[
+      "아이디어를 제안하고 결과물을 보여주기 좋습니다. 설명은 간결하게, 실행 계획은 구체적으로 준비해 보세요.",
+      "창의적인 생각이 힘을 발휘할 수 있습니다. 남들이 당연하게 여기는 일도 다른 관점에서 바라보세요.",
+      "소통이 성과를 만드는 날입니다. 회의나 대화에서 좋은 생각이 있다면 자신 있게 나눠 보세요."
+    ],
+    resource:[
+      "자료 조사와 업무 정리에 힘을 쓰기 좋습니다. 기초를 탄탄히 다지면 다음 단계가 훨씬 편해집니다.",
+      "경험자의 조언을 참고하면 도움이 됩니다. 모르는 것을 묻는 사람은 성장할 기회를 얻습니다.",
+      "계획을 점검하고 부족한 부분을 보완해 보세요. 오늘의 준비가 내일의 자신감을 만듭니다."
+    ],
+    wealth:[
+      "실적과 성과를 현실적으로 살펴보세요. 계약이나 거래는 세부 조건을 확인하는 것이 중요합니다.",
+      "일의 효율과 수익성을 함께 생각해 보세요. 바쁘게 움직이는 것보다 제대로 움직이는 것이 더 중요합니다.",
+      "성과를 정리하고 다음 목표를 세우기 좋습니다. 숫자와 기록을 살펴보면 새로운 개선점이 보입니다."
+    ],
+    authority:[
+      "일정과 책임을 분명히 하면 업무가 수월해집니다. 우선순위를 정하고 중요한 일부터 처리하세요.",
+      "규칙과 약속을 지키는 태도가 신뢰를 만듭니다. 급한 일일수록 한 번 더 확인하는 습관을 가져보세요.",
+      "부담이 큰 일은 혼자 끌어안지 말고 역할을 나누세요. 협력도 훌륭한 업무 능력입니다."
+    ]
+  },
+  건강운:{
+    same:[
+      "활동과 휴식의 균형을 살펴보세요. 의욕이 앞서더라도 몸이 보내는 신호를 무시하지 마세요.",
+      "몸을 가볍게 움직이며 기분을 환기해 보세요. 무리한 운동보다 꾸준한 산책이 더 잘 맞을 수 있습니다.",
+      "오늘은 나를 위한 시간을 조금 마련해 보세요. 쉬는 것도 내일을 위한 중요한 준비입니다."
+    ],
+    output:[
+      "움직임이 많아질 수 있는 날입니다. 중간중간 쉬고 물도 충분히 챙겨 마셔 보세요.",
+      "기분 전환을 위해 가벼운 산책을 해보세요. 햇볕과 바람이 생각보다 좋은 응원이 될 수 있습니다.",
+      "활동 후에는 충분한 휴식이 필요합니다. 열심히 움직인 나에게 잠깐의 여유를 선물하세요."
+    ],
+    resource:[
+      "수면과 식사 시간을 돌아보기 좋습니다. 규칙적인 생활이 하루의 컨디션을 든든하게 받쳐 줍니다.",
+      "몸과 마음을 차분하게 쉬게 해주세요. 따뜻한 차 한 잔과 여유로운 호흡도 좋은 휴식입니다.",
+      "무리한 일정은 조금 덜어내도 괜찮습니다. 건강을 챙기는 일은 결코 게으름이 아닙니다."
+    ],
+    wealth:[
+      "생활 습관을 점검해 보세요. 규칙적인 식사와 적당한 움직임이 건강 관리의 기본입니다.",
+      "몸에 좋은 습관 하나를 시작해 보세요. 거창한 계획보다 매일 지킬 수 있는 작은 실천이 좋습니다.",
+      "과식이나 늦은 시간의 무리한 활동은 줄여 보세요. 내 몸을 아끼는 것도 중요한 자기 투자입니다."
+    ],
+    authority:[
+      "책임과 긴장으로 피로가 쌓이지 않도록 주의하세요. 잠깐의 휴식과 스트레칭으로 몸을 풀어주세요.",
+      "해야 할 일이 많아도 식사와 휴식은 챙기세요. 몸이 건강해야 마음도 여유로워집니다.",
+      "오늘은 무리한 약속을 줄이고 나만의 회복 시간을 가져보세요. 쉬어 가도 괜찮습니다."
+    ]
+  }
+};
+
+/* 오행별 성향을 부드러운 생활 조언으로 연결 */
+const elementMessages = {
+  목:"새로운 시작과 성장의 마음을 살려 보세요. 작은 도전 하나가 좋은 자극이 됩니다.",
+  화:"따뜻한 표현과 밝은 에너지를 나누어 보세요. 주변에 웃음을 전하는 사람이 되어 보세요.",
+  토:"차분함과 꾸준함을 살려 보세요. 서두르지 않고 한 걸음씩 가는 힘이 중요합니다.",
+  금:"정리와 선택에 집중해 보세요. 불필요한 것을 덜어내면 중요한 것이 더 잘 보입니다.",
+  수:"유연한 생각과 지혜를 활용해 보세요. 한 가지 방법만 고집하지 않으면 길이 열릴 수 있습니다."
+};
+
+const absentMessages = {
+  목:"새로운 일에 도전하거나 가벼운 산책으로 기분을 환기해 보세요.",
+  화:"따뜻한 대화와 밝은 표현으로 주변에 온기를 나누어 보세요.",
+  토:"생활 리듬을 정돈하고 작은 일부터 꾸준히 실천해 보세요.",
+  금:"주변을 정리하고 오늘 꼭 필요한 일에 집중해 보세요.",
+  수:"잠깐의 여유를 갖고 생각을 정리하며 유연하게 대처해 보세요."
+};
+
+const encouragements = [
+  "오늘의 작은 미소 하나가 생각보다 큰 행운의 시작일 수 있습니다.",
+  "모든 일이 한 번에 풀릴 필요는 없습니다. 오늘 한 걸음이면 충분합니다.",
+  "좋은 날은 기다리는 것이 아니라 작은 기쁨을 발견하면서 만들어 가는 것입니다.",
+  "오늘도 잘하고 있습니다. 스스로에게 조금 더 따뜻한 사람이 되어 주세요.",
+  "어제보다 조금 나아졌다면 그것으로 충분히 멋진 하루입니다.",
+  "뜻대로 되지 않는 일이 있어도 괜찮습니다. 인생은 한 장면으로 결정되지 않으니까요.",
+  "행운은 준비된 마음에 찾아옵니다. 오늘도 당신의 좋은 가능성을 믿어 보세요.",
+  "웃을 일이 없다면 먼저 웃어 보세요. 가끔은 마음이 표정을 따라오기도 합니다.",
+  "오늘의 주인공은 바로 당신입니다. 너무 겸손하게 조연만 맡지 마세요!",
+  "천천히 가도 괜찮습니다. 멈추지만 않는다면 나만의 길을 걷고 있는 것입니다."
+];
+
+function seoulToday(){
+  const parts=new Intl.DateTimeFormat("en-CA",{
+    timeZone:"Asia/Seoul",
+    year:"numeric",month:"2-digit",day:"2-digit"
+  }).formatToParts(new Date());
+
+  const p={};
+  for(const x of parts) if(x.type!=="literal") p[x.type]=x.value;
+
+  return {
+    year:Number(p.year),
+    month:Number(p.month),
+    day:Number(p.day),
+    text:`${p.year}년 ${Number(p.month)}월 ${Number(p.day)}일`,
+    key:`${p.year}-${p.month}-${p.day}`
+  };
+}
+
+function getRelation(mine,today){
+  if(mine===today)return "same";
+  if(generates[mine]===today)return "output";
+  if(generates[today]===mine)return "resource";
+  if(controls[mine]===today)return "wealth";
+  if(controls[today]===mine)return "authority";
+  return "same";
+}
+
+function getElementCounts(pillars,unknown){
+  const count={목:0,화:0,토:0,금:0,수:0};
+  const keys=unknown
+    ?["year","month","day"]
+    :["year","month","day","hour"];
+
+  for(const key of keys){
+    const pillar=pillars[key];
+    if(!pillar || pillar.length<2)continue;
+    count[getHeavenlyStemElement(pillar[0])]++;
+    count[getEarthlyBranchElement(pillar[1])]++;
+  }
+  return count;
+}
+
+function getDominant(count){
+  const max=Math.max(...elements.map(e=>count[e]));
+  return elements.filter(e=>count[e]===max);
+}
+
+function getAbsent(count){
+  return elements.filter(e=>count[e]===0);
+}
+
+/* 날짜와 사주에 따라 같은 날에도 개인별 문장이 달라지도록 선택 */
+function hashText(text){
+  let h=2166136261;
+  for(let i=0;i<text.length;i++){
+    h^=text.charCodeAt(i);
+    h=Math.imul(h,16777619);
+  }
+  return h>>>0;
+}
+
+function pick(list,seed){
+  return list[seed%list.length];
+}
+
+function renderPillars(pillars,unknown){
+  const keys=unknown
+    ?[["year","년주"],["month","월주"],["day","일주"]]
+    :[["year","년주"],["month","월주"],["day","일주"],["hour","시주"]];
+
+  $("pillars").innerHTML=keys.map(([key,label])=>
+    `<div class="pillar"><span>${label}</span><b>${pillars[key]}</b></div>`
+  ).join("");
+}
+
+function renderElements(count){
+  $("elements").innerHTML=elements.map(e=>
+    `<div class="element"><span>${e}</span><b>${count[e]}</b><span>개</span></div>`
+  ).join("");
+}
+
+function getElementComment(count,unknown){
+  const dominant=getDominant(count);
+  const absent=getAbsent(count);
+  const total=unknown?6:8;
+
+  let text=`현재 표시된 ${total}글자의 기본 오행 구성에서 `;
+
+  if(dominant.length===5){
+    text+="다섯 오행이 고르게 나타납니다. 여러 관점을 균형 있게 활용하는 태도를 떠올려 보세요.";
+  }else{
+    text+=`${dominant.map(e=>elementNames[e]).join(", ")}의 비중이 상대적으로 높게 나타납니다. `;
+    text+=dominant.map(e=>elementMessages[e]).join(" ");
+  }
+
+  if(absent.length){
+    text+=` 참고로 이 구성에서 보이지 않는 오행은 ${absent.map(e=>elementNames[e]).join(", ")}입니다. `;
+    text+=absent.map(e=>absentMessages[e]).join(" ");
+  }else{
+    text+=" 다섯 오행이 모두 드러나 있으니 각자의 장점을 상황에 맞게 활용해 보세요.";
+  }
+
+  text+=" 오행의 개수만으로 운의 좋고 나쁨이나 사주의 강약을 단정하지는 않습니다.";
+  return text;
+}
+
+function render(){
+  $("error").textContent="";
+
+  try{
+    const year=Number($("birthYear").value);
+    const month=Number($("birthMonth").value);
+    const day=Number($("birthDay").value);
+
+    if(!year||!month||!day)
+      throw new Error("생년월일을 모두 입력해 주세요.");
+
+    if(year<1800||year>2100||month<1||month>12||day<1||day>31)
+      throw new Error("생년월일을 올바르게 입력해 주세요.");
+
+    const calendar=$("calendar").value;
+    const isLunar=calendar==="lunar";
+    const isLeapMonth=isLunar&&$("leap").checked;
+    const unknown=$("unknownTime").checked;
+
+    /* 양력 날짜의 실제 유효성 검사 */
+    if(!isLunar){
+      const date=new Date(Date.UTC(year,month-1,day));
+      if(date.getUTCFullYear()!==year||
+         date.getUTCMonth()!==month-1||
+         date.getUTCDate()!==day){
+        throw new Error("실제로 존재하는 날짜를 입력해 주세요.");
+      }
+    }
+
+    let hour=12,minute=0;
+
+    if(!unknown){
+      const time=$("birthTime").value;
+      if(!time)
+        throw new Error("출생시간을 입력하거나 시간 모름을 선택해 주세요.");
+      [hour,minute]=time.split(":").map(Number);
+    }
+
+    const birth=calculateFourPillars({
+      year,month,day,hour,minute,isLunar,isLeapMonth
+    });
+
+    const birthPillars=birth.toObject();
+
+    if(!birthPillars||!birthPillars.day)
+      throw new Error("사주 계산 결과를 확인할 수 없습니다. 생년월일과 음력·윤달 여부를 확인해 주세요.");
+
+    const today=seoulToday();
+
+    const todayResult=calculateFourPillars({
+      year:today.year,
+      month:today.month,
+      day:today.day,
+      hour:12,
+      minute:0
+    });
+
+    const todayPillars=todayResult.toObject();
+
+    if(!todayPillars||!todayPillars.day)
+      throw new Error("오늘의 일진을 계산하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+
+    const dayMaster=birthPillars.day[0];
+    const mineElement=getHeavenlyStemElement(dayMaster);
+    const todayStem=todayPillars.day[0];
+    const todayElement=getHeavenlyStemElement(todayStem);
+    const relation=getRelation(mineElement,todayElement);
+
+    const counts=getElementCounts(birthPillars,unknown);
+    const dominant=getDominant(counts);
+    const absent=getAbsent(counts);
+
+    const seed=hashText(
+      `${today.key}|${birthPillars.year}|${birthPillars.month}|${birthPillars.day}|${unknown?"unknown":birthPillars.hour}`
+    );
+
+    $("today").textContent=today.text;
+    $("birthlabel").textContent=
+      `${isLunar?"음력":"양력"} ${year}년 ${month}월 ${day}일`+
+      (isLeapMonth?" · 윤달":"");
+
+    $("daypillar").textContent=todayPillars.day+"일";
+    $("daydesc").textContent=
+      `오늘의 일간 ${todayStem}(${todayElement}) · 나의 일간 ${dayMaster}(${mineElement})`;
+
+    $("daymaster").textContent=
+      `나의 일간은 ${dayMaster}(${mineElement})입니다. 오늘은 ${relationNames[relation]}이 이어지는 날로 풀이합니다.`;
+
+    renderPillars(birthPillars,unknown);
+    renderElements(counts);
+
+    $("elementNote").textContent=getElementComment(counts,unknown);
+
+    const dominantText=dominant.map(e=>elementNames[e]).join(", ");
+    const absentText=absent.length
+      ?` 이번 사주 구성에서 드러나지 않는 ${absent.map(e=>elementNames[e]).join(", ")}의 특성은 생활 속 작은 실천으로 떠올려 볼 수 있습니다.`
+      :" 다섯 오행이 모두 드러나는 구성입니다.";
+
+    $("summary").textContent=
+      `오늘의 일진 ${todayPillars.day}과 나의 일간 ${dayMaster}의 관계는 ${relationNames[relation]}입니다. `+
+      `나의 오행 구성에서는 ${dominantText}의 비중이 상대적으로 나타납니다.`+
+      absentText+
+      " 오늘의 운세는 이 관계를 바탕으로 재미있게 살펴보는 참고 풀이입니다.";
+
+    const labels=["종합운","금전운","애정운","직장·사업운","건강운"];
+
+    $("fortuneCards").innerHTML=labels.map((label,index)=>{
+      const base=pick(readings[label][relation],seed+index*17);
+      let extra="";
+
+      if(index===0){
+        extra=pick([
+          "작은 일부터 기분 좋게 시작해 보세요.",
+          "오늘의 좋은 기운은 당신의 미소에서 시작됩니다.",
+          "조금 느려도 괜찮습니다. 당신만의 속도가 있습니다."
+        ],seed+31);
+      }else if(index===1){
+        extra=pick([
+          "작은 절약도 훌륭한 재테크의 시작입니다.",
+          "지갑은 가볍게, 마음은 넉넉하게!",
+          "충동구매보다 계획적인 선택이 더 큰 만족을 줍니다."
+        ],seed+37);
+      }else if(index===2){
+        extra=pick([
+          "사랑은 거창한 말보다 작은 관심에서 자랍니다.",
+          "먼저 웃어 주는 사람이 오늘의 분위기 메이커입니다.",
+          "나 자신을 아끼는 마음도 사랑의 중요한 시작입니다."
+        ],seed+41);
+      }else if(index===3){
+        extra=pick([
+          "작은 성취 하나를 만들어 스스로를 칭찬해 주세요.",
+          "성실함은 언젠가 반드시 나의 든든한 편이 됩니다.",
+          "완벽한 계획보다 실행하는 용기가 더 중요합니다."
+        ],seed+43);
+      }else{
+        extra=pick([
+          "건강은 하루아침에 만드는 것이 아니라 매일 돌보는 것입니다.",
+          "오늘 나에게 주는 가장 좋은 선물은 충분한 휴식일 수 있습니다.",
+          "몸과 마음 모두에게 친절한 하루를 보내세요."
+        ],seed+47);
+      }
+
+      return `<article class="card">
+        <h3>${label}</h3>
+        <p>${base}</p>
+        <span class="highlight">${extra}</span>
+      </article>`;
+    }).join("");
+
+    const tipOptions=[
+      "오늘은 작은 친절 하나를 실천해 보세요. 누군가에게 건넨 따뜻한 말이 결국 나에게도 좋은 기분으로 돌아옵니다.",
+      "모든 문제를 오늘 다 해결할 필요는 없습니다. 하나씩 풀어가면 됩니다. 인생도 가끔은 천천히 가야 제맛입니다.",
+      "좋은 기회는 생각보다 평범한 모습으로 찾아옵니다. 주변을 조금 더 따뜻한 눈으로 바라보세요.",
+      "오늘은 나 자신에게도 칭찬을 아끼지 마세요. 여기까지 잘 걸어온 것만으로도 충분히 대단합니다.",
+      "마음에 들지 않는 일이 생겨도 하루 전체를 포기하지 마세요. 한 번의 실수가 오늘의 모든 것을 결정하지는 않습니다.",
+      "작은 웃음과 여유를 잊지 마세요. 복은 꼭 큰 소리로 찾아오는 것만은 아닙니다."
+    ];
+
+    $("tip").textContent=pick(tipOptions,seed+53);
+    $("quote").textContent="“"+pick(encouragements,seed+59)+"”";
+
+    $("entry").style.display="none";
+    $("result").style.display="block";
+    window.scrollTo({top:0,behavior:"smooth"});
+
+  }catch(error){
+    $("error").textContent=
+      error.message||
+      "계산 중 오류가 발생했습니다. 입력값과 양력·음력 여부를 확인해 주세요.";
+  }
+}
+
+$("calendar").addEventListener("change",()=>{
+  const lunar=$("calendar").value==="lunar";
+  $("leapArea").style.display=lunar?"block":"none";
+  $("leap").checked=false;
+});
+
+$("unknownTime").addEventListener("change",()=>{
+  $("timeArea").style.display=$("unknownTime").checked?"none":"block";
+});
+
+$("show").addEventListener("click",render);
+
+$("again").addEventListener("click",()=>{
+  $("result").style.display="none";
+  $("entry").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+</script>
+</body>
+</html>

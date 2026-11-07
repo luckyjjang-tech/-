@@ -1,0 +1,85 @@
+
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>무사랑 윤달 사주 검증</title>
+</head>
+<body>
+<h2>무사랑 윤달 및 출생시간 검증</h2>
+<p id="status">검증 중...</p>
+<pre id="result"></pre>
+
+<script type="module">
+import { calculateFourPillars } from
+  "https://esm.sh/manseryeok@2.0.0";
+
+const status = document.getElementById("status");
+const output = document.getElementById("result");
+
+try {
+  // 2020년 윤4월 1일 = 양력 2020년 5월 23일
+  const leapBirth = calculateFourPillars({
+    year: 2020,
+    month: 4,
+    day: 1,
+    hour: 12,
+    minute: 0,
+    isLunar: true,
+    isLeapMonth: true
+  }).toObject();
+
+  const solarBirth = calculateFourPillars({
+    year: 2020,
+    month: 5,
+    day: 23,
+    hour: 12,
+    minute: 0
+  }).toObject();
+
+  const leapMatchesSolar =
+    leapBirth.year === solarBirth.year &&
+    leapBirth.month === solarBirth.month &&
+    leapBirth.day === solarBirth.day &&
+    leapBirth.hour === solarBirth.hour;
+
+  // 출생시간을 모르는 경우 내부 기준 시간을 바꾸어도
+  // 년주·월주·일주가 동일한지 확인
+  const morning = calculateFourPillars({
+    year: 1990, month: 5, day: 15,
+    hour: 8, minute: 0
+  }).toObject();
+
+  const evening = calculateFourPillars({
+    year: 1990, month: 5, day: 15,
+    hour: 20, minute: 0
+  }).toObject();
+
+  const datePillarsMatch =
+    morning.year === evening.year &&
+    morning.month === evening.month &&
+    morning.day === evening.day;
+
+  const result = {
+    윤달_2020년4월1일: leapBirth,
+    양력_2020년5월23일: solarBirth,
+    윤달과양력_사주일치: leapMatchesSolar,
+    출생시간에_관계없는_세기둥일치: datePillarsMatch,
+    출생시간미상_표시: "년주·월주·일주만 표시하고 시주는 제외"
+  };
+
+  output.textContent = JSON.stringify(result, null, 2);
+
+  status.textContent =
+    leapMatchesSolar && datePillarsMatch
+      ? "검증 성공: 윤달과 출생시간 처리가 정상입니다."
+      : "검증 결과 확인이 필요합니다.";
+
+} catch (error) {
+  status.textContent = "오류: " + error.message;
+  output.textContent = error.stack || "";
+}
+</script>
+</body>
+</html>

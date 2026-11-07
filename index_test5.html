@@ -1,0 +1,75 @@
+
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>무사랑 오행 분포 테스트</title>
+</head>
+<body>
+<h2>무사랑 오행 분포 테스트</h2>
+<p id="status">계산 중...</p>
+<pre id="result"></pre>
+
+<script type="module">
+import {
+  calculateFourPillars,
+  getHeavenlyStemElement,
+  getEarthlyBranchElement
+} from "https://esm.sh/manseryeok@2.0.0";
+
+try {
+  const r = calculateFourPillars({
+    year: 1990,
+    month: 5,
+    day: 15,
+    hour: 7,
+    minute: 30
+  });
+
+  const pillars = r.toObject();
+  const count = {
+    목: 0, 화: 0, 토: 0, 금: 0, 수: 0
+  };
+
+  const details = {};
+
+  for (const [key, value] of Object.entries(pillars)) {
+    const stem = value[0];
+    const branch = value[1];
+
+    const stemElement = getHeavenlyStemElement(stem);
+    const branchElement = getEarthlyBranchElement(branch);
+
+    count[stemElement]++;
+    count[branchElement]++;
+
+    details[key] = {
+      pillar: value,
+      stemElement,
+      branchElement
+    };
+  }
+
+  const result = {
+    사주: pillars,
+    기둥별_오행: details,
+    오행_분포: count,
+    안내: "천간과 지지의 기본 오행만 집계하며 지장간은 포함하지 않음"
+  };
+
+  document.getElementById("status").textContent =
+    "오행 분포 계산 성공";
+
+  document.getElementById("result").textContent =
+    JSON.stringify(result, null, 2);
+
+} catch (error) {
+  document.getElementById("status").textContent =
+    "계산 오류: " + error.message;
+  document.getElementById("result").textContent =
+    error.stack || "";
+}
+</script>
+</body>
+</html>

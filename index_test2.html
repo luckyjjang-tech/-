@@ -1,0 +1,90 @@
+
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>무사랑 음력 및 출생시간 테스트</title>
+</head>
+<body>
+<h2>무사랑 사주 계산 검증</h2>
+<p id="status">계산 중...</p>
+<pre id="result"></pre>
+
+<script type="module">
+import {
+  calculateFourPillars,
+  lunarToSolar
+} from "https://esm.sh/manseryeok@2.0.0";
+
+const status = document.getElementById("status");
+const output = document.getElementById("result");
+
+try {
+  // 1. 음력과 양력 결과 비교
+  const lunar = calculateFourPillars({
+    year: 1992,
+    month: 9,
+    day: 29,
+    hour: 5,
+    minute: 30,
+    isLunar: true,
+    isLeapMonth: false
+  });
+
+  const solar = calculateFourPillars({
+    year: 1992,
+    month: 10,
+    day: 24,
+    hour: 5,
+    minute: 30
+  });
+
+  const lunarPillars = lunar.toObject();
+  const solarPillars = solar.toObject();
+
+  const same =
+    lunarPillars.year === solarPillars.year &&
+    lunarPillars.month === solarPillars.month &&
+    lunarPillars.day === solarPillars.day &&
+    lunarPillars.hour === solarPillars.hour;
+
+  // 2. 윤달 변환 확인
+  const leap = lunarToSolar(2020, 4, 1, true);
+
+  // 3. 출생시간을 모르는 경우
+  // 정오를 내부 기준으로 사용하지만 시주는 결과에서 제외
+  const unknownTime = calculateFourPillars({
+    year: 1990,
+    month: 5,
+    day: 15,
+    hour: 12,
+    minute: 0
+  }).toObject();
+
+  const result = {
+    음력_1992년9월29일: lunarPillars,
+    양력_1992년10월24일: solarPillars,
+    음력양력_결과일치: same,
+    윤달_2020년4월1일_양력변환: leap,
+    출생시간_모름_풀이자료: {
+      year: unknownTime.year,
+      month: unknownTime.month,
+      day: unknownTime.day,
+      hour: "출생시간 미상 - 시주 제외"
+    }
+  };
+
+  output.textContent = JSON.stringify(result, null, 2);
+
+  status.textContent = same
+    ? "검증 성공: 음력과 양력의 사주 결과가 일치합니다."
+    : "확인 필요: 음력과 양력의 결과가 다릅니다.";
+
+} catch (error) {
+  status.textContent = "계산 오류: " + error.message;
+  output.textContent = error.stack || "";
+}
+</script>
+</body>
+</html>

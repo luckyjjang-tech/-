@@ -1,0 +1,49 @@
+
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>무사랑 오행 십성 검증</title>
+</head>
+<body>
+<h2>무사랑 오행·십성 계산 테스트</h2>
+<p id="status">계산 중...</p>
+<pre id="result"></pre>
+
+<script type="module">
+import { calculateFourPillars } from
+  "https://esm.sh/manseryeok@2.0.0";
+
+try {
+  const r = calculateFourPillars({
+    year: 1990,
+    month: 5,
+    day: 15,
+    hour: 7,
+    minute: 30
+  });
+
+  const result = {
+    사주팔자: r.toObject(),
+    일간오행: r.dayElement,
+    일간음양: r.dayYinYang,
+    십성: r.tenGods,
+    공망: r.voidBranches
+  };
+
+  document.getElementById("status").textContent =
+    "오행·십성 계산 확인 완료";
+
+  document.getElementById("result").textContent =
+    JSON.stringify(result, null, 2);
+
+} catch (error) {
+  document.getElementById("status").textContent =
+    "계산 오류: " + error.message;
+  document.getElementById("result").textContent =
+    error.stack || "";
+}
+</script>
+</body>
+</html>
